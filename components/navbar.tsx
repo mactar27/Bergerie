@@ -40,7 +40,10 @@ export function Navbar() {
             alt="Bergerie Malia - Genius in Genetics"
             width={800}
             height={272}
-            className="h-48 w-auto object-contain"
+            className={cn(
+              "w-auto object-contain transition-all duration-300",
+              scrolled ? "h-12" : "h-16"
+            )}
             priority
           />
         </a>
