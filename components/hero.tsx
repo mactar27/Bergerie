@@ -69,13 +69,13 @@ export function Hero() {
 
         {/* Image */}
         <div className="relative animate-fade-up">
-          <div className="relative aspect-square overflow-hidden rounded-3xl shadow-2xl shadow-primary/10">
+          <div className="relative aspect-square overflow-hidden rounded-3xl shadow-2xl shadow-primary/10 bg-gradient-to-br from-muted/60 to-background">
             <Image
               src="/ChatGPT Image 6 juin 2026, 12_51_34.png"
               alt="Mouton Ladoum de championnat de la Bergerie Malia"
               fill
               priority
-              className="object-cover"
+              className="object-contain"
             />
           </div>
           <div className="absolute -bottom-4 -left-4 hidden rounded-2xl bg-accent px-5 py-4 text-accent-foreground shadow-lg sm:block">
