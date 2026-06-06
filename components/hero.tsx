@@ -69,7 +69,7 @@ export function Hero() {
 
         {/* Image */}
         <div className="relative animate-fade-up">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl shadow-primary/10 lg:aspect-[5/4]">
+          <div className="relative aspect-square overflow-hidden rounded-3xl shadow-2xl shadow-primary/10">
             <Image
               src="/ChatGPT Image 6 juin 2026, 12_51_34.png"
               alt="Mouton Ladoum de championnat de la Bergerie Malia"
