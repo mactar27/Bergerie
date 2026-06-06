@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Sheep {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  imageUrl    String?
+
+  sireId      Int?
+  damId       Int?
+  sire        Sheep?   @relation("SireRelation", fields: [sireId], references: [id])
+  dam         Sheep?   @relation("DamRelation", fields: [damId], references: [id])
+  
+  siredChildren   Sheep[] @relation("SireRelation")
+  dammedChildren  Sheep[] @relation("DamRelation")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
