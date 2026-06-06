@@ -1,116 +1,82 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
-import { Card } from '@/components/ui/card';
 
-type Sheep = {
-  id: number;
-  name: string;
-  sireId: number | null;
-  damId: number | null;
-  sire?: Sheep;
-  dam?: Sheep;
+const GENEALOGIES: Record<string, { image: string; width: number; height: number }> = {
+  'AMIR': {
+    image: '/images/genealogie-amir.jpeg',
+    width: 1600,
+    height: 680,
+  },
+  'NDIAYE FASS': {
+    image: '/images/genealogie-ndiaye-fass.jpeg',
+    width: 1600,
+    height: 680,
+  },
 };
-
-function PedigreeNode({ sheep, allSheep, level = 0 }: { sheep: Sheep; allSheep: Sheep[]; level?: number }) {
-  const sire = allSheep.find(s => s.id === sheep.sireId);
-  const dam = allSheep.find(s => s.id === sheep.damId);
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className="flex gap-4 mb-4">
-        {sire && (
-          <div className="flex flex-col items-center">
-            <PedigreeNode sheep={sire} allSheep={allSheep} level={level + 1} />
-            <div className="w-px h-6 bg-border mt-2"></div>
-          </div>
-        )}
-        {dam && (
-          <div className="flex flex-col items-center">
-            <PedigreeNode sheep={dam} allSheep={allSheep} level={level + 1} />
-            <div className="w-px h-6 bg-border mt-2"></div>
-          </div>
-        )}
-      </div>
-      {/* Connector from parents */}
-      {(sire || dam) && (
-        <div className="flex w-full justify-center mb-2">
-          <div className="h-px bg-border w-1/2"></div>
-        </div>
-      )}
-      <Card className={`px-4 py-2 text-center text-sm font-bold shadow-sm ${level === 0 ? 'bg-primary text-primary-foreground text-lg px-6 py-3' : 'bg-card'}`}>
-        {sheep.name}
-      </Card>
-    </div>
-  );
-}
 
 function NosMoutonsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const selectedMouton = searchParams.get('mouton') || 'AMIR';
-  const [sheepData, setSheepData] = useState<Sheep[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch('/api/sheep')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Impossible de charger les données des moutons');
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (Array.isArray(data)) {
-          setSheepData(data);
-        } else {
-          throw new Error('Format des données invalide');
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setError(err.message || 'Une erreur inconnue est survenue');
-        setLoading(false);
-      });
-  }, []);
-
-  const rootSheep = Array.isArray(sheepData) ? sheepData.find(s => s.name === selectedMouton) : undefined;
+  const genealogy = GENEALOGIES[selectedMouton];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
       <main className="flex-1 pt-24 pb-16">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mb-12 text-center">
+          {/* En-tête */}
+          <div className="mb-10 text-center">
             <h1 className="font-heading text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-              Génétique d'Exception
+              Génétique d&apos;Exception
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Découvrez l'arbre généalogique de {selectedMouton}, fruit d'années de sélection rigoureuse.
+              Découvrez l&apos;arbre généalogique de{' '}
+              <span className="font-bold text-primary">{selectedMouton}</span>,
+              fruit d&apos;années de sélection rigoureuse.
             </p>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center p-12">
-              <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            </div>
-          ) : error ? (
-            <div className="text-center p-12 text-destructive font-semibold">
-              Erreur : {error}. Veuillez vérifier la configuration de la base de données.
-            </div>
-          ) : rootSheep ? (
-            <div className="overflow-x-auto pb-8">
-              <div className="min-w-max p-8 flex justify-center">
-                <PedigreeNode sheep={rootSheep} allSheep={sheepData} />
-              </div>
+          {/* Sélecteur de mouton */}
+          <div className="flex flex-wrap gap-3 justify-center mb-10">
+            {Object.keys(GENEALOGIES).map((name) => (
+              <button
+                key={name}
+                id={`selector-${name.replace(/\s+/g, '-').toLowerCase()}`}
+                onClick={() =>
+                  router.push(`/nos-moutons?mouton=${encodeURIComponent(name)}`)
+                }
+                className={`rounded-full px-6 py-2.5 text-sm font-bold tracking-wide transition-all duration-200 border ${
+                  selectedMouton === name
+                    ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-105'
+                    : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
+                }`}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+
+          {/* Image de généalogie */}
+          {genealogy ? (
+            <div className="overflow-hidden rounded-2xl shadow-2xl shadow-primary/10 border border-border">
+              <Image
+                src={genealogy.image}
+                alt={`Arbre généalogique de ${selectedMouton} - Bergerie Malia`}
+                width={genealogy.width}
+                height={genealogy.height}
+                className="w-full h-auto"
+                priority
+              />
             </div>
           ) : (
             <div className="text-center p-12 text-muted-foreground">
-              Données généalogiques indisponibles pour {selectedMouton}.
+              Arbre généalogique non disponible pour {selectedMouton}.
             </div>
           )}
         </div>
