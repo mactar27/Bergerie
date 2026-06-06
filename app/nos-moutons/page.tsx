@@ -53,21 +53,32 @@ function NosMoutonsContent() {
   const selectedMouton = searchParams.get('mouton') || 'AMIR';
   const [sheepData, setSheepData] = useState<Sheep[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/sheep')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Impossible de charger les données des moutons');
+        }
+        return res.json();
+      })
       .then(data => {
-        setSheepData(data);
+        if (Array.isArray(data)) {
+          setSheepData(data);
+        } else {
+          throw new Error('Format des données invalide');
+        }
         setLoading(false);
       })
       .catch(err => {
         console.error(err);
+        setError(err.message || 'Une erreur inconnue est survenue');
         setLoading(false);
       });
   }, []);
 
-  const rootSheep = sheepData.find(s => s.name === selectedMouton);
+  const rootSheep = Array.isArray(sheepData) ? sheepData.find(s => s.name === selectedMouton) : undefined;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -86,6 +97,10 @@ function NosMoutonsContent() {
           {loading ? (
             <div className="flex justify-center p-12">
               <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center p-12 text-destructive font-semibold">
+              Erreur : {error}. Veuillez vérifier la configuration de la base de données.
             </div>
           ) : rootSheep ? (
             <div className="overflow-x-auto pb-8">
