@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const links = [
-  { href: "#accueil", label: "Accueil" },
-  { href: "#a-propos", label: "À propos" },
-  { href: "#nos-moutons", label: "Moutons" },
-  { href: "#nos-services", label: "Services" },
+  { href: "/#accueil", label: "Accueil" },
+  { href: "/#a-propos", label: "À propos" },
+  { href: "/#nos-moutons", label: "Moutons" },
+  { href: "/#nos-services", label: "Services" },
 ]
 
 export function Navbar() {
