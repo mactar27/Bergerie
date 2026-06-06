@@ -71,7 +71,7 @@ export function Hero() {
         <div className="relative animate-fade-up">
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl shadow-primary/10 lg:aspect-[5/4]">
             <Image
-              src="/placeholder.svg?height=640&width=800&query=champion%20Ladoum%20sheep%20black%20and%20white%20with%20blue%20collar%20portrait"
+              src="/ChatGPT Image 6 juin 2026, 12_51_34.png"
               alt="Mouton Ladoum de championnat de la Bergerie Malia"
               fill
               priority
